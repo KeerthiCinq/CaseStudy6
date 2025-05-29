@@ -47,7 +47,6 @@ module "endpoint" {
 }
 
 
-/*
 module "iam-cloudwatch" {
   source       = "./modules/iam-cloudwatch"
   project_name = var.project_name
@@ -59,4 +58,3 @@ module "ssh_command" {
   ssh_key_path  = "~/.ssh/your-key.pem"
 }
 
-*/
