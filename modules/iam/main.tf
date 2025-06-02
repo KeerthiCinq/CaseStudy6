@@ -11,8 +11,6 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-
-
 resource "aws_iam_role" "role" {
   name               = "${var.project_name}-ec2-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
@@ -30,8 +28,39 @@ resource "aws_iam_role_policy_attachment" "s3_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
 }
 
-resource "aws_iam_instance_profile" "iam_profile" {
-  name = "iam_profile"
+# Create IAM Policy for cloudwatch logs
+resource "aws_iam_policy" "cloudwatch_logs_policy" {
+  name        = "CloudWatchLogsWritePolicy"
+  description = "Allows writing logs to CloudWatch"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams",
+          "logs:DescribeLogGroups",
+          "logs:CreateLogStream",
+          "logs:CreateLogGroup"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+
+# Attach Policy to Role
+resource "aws_iam_role_policy_attachment" "attach_policy" {
+  role       = aws_iam_role.role.name
+  policy_arn = aws_iam_policy.cloudwatch_logs_policy.arn
+}
+
+
+# Add instance profile
+resource "aws_iam_instance_profile" "my_instance_profile" {
+  name = "cloudwatch_agent_instance_profile"
   role = aws_iam_role.role.name
   tags = {
     Name = "${var.project_name}"
