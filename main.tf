@@ -54,9 +54,6 @@ data "aws_caller_identity" "current" {}
 resource "aws_s3_bucket" "cloudtrail_bucket" {
   bucket = "my-cloudtrail-logs-bucket-${data.aws_caller_identity.current.account_id}"
   
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 # S3 bucket policy allowing CloudTrail to write logs
