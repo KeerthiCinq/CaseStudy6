@@ -30,8 +30,6 @@ data "template_file" "user_data" {
     echo "Listing all files in s3://$S3_BUCKET/"
 
     aws s3 ls "s3://var.s3-id/" --recursive
-    aws s3 cp s3://var.s3-id/index.html /var/www/html/index.html
-    aws s3 cp /var/www/html/index.html s3://var.s3-id/index1.html
     
     sudo systemctl start httpd
     sudo systemctl enable httpd
